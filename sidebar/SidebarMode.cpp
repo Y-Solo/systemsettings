@@ -78,9 +78,10 @@ void FocusHackWidget::focusPrevious()
     focusNextPrevChild(false);
 }
 
-SubcategoryModel::SubcategoryModel(QAbstractItemModel *parentModel, QObject *parent)
+SubcategoryModel::SubcategoryModel(QAbstractItemModel *parentModel, SidebarMode *parent)
     : KSelectionProxyModel(nullptr, parent),
-        m_parentModel(parentModel)
+        m_parentModel(parentModel),
+        m_sidebarMode(parent);
 {
     setSourceModel(parentModel);
     setSelectionModel(new QItemSelectionModel(parentModel, this));
@@ -99,6 +100,10 @@ void SubcategoryModel::setParentIndex(const QModelIndex &activeModule)
     emit titleChanged();
 }
 
+void SubcategoryModel::loadCategoryModule()
+{
+    m_sidebarMode->loadModule(activeModule);
+}
 
 class MostUsedModel : public QSortFilterProxyModel
 {
@@ -462,7 +467,7 @@ void SidebarMode::loadModule( const QModelIndex& activeModule, const QStringList
         setIntroPageVisible(false);
     }
 
-    if ( mi->children().length() < 1) {
+    if ( 1||mi->children().length() < 1) {
         d->moduleView->loadModule( activeModule, args );
     } else {
         d->moduleView->loadModule( activeModule.model()->index(0, 0, activeModule), args );

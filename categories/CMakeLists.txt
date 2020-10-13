@@ -7,6 +7,7 @@ install( FILES
     settings-appearance-color.desktop
     settings-appearance-font.desktop
     settings-appearance-icons.desktop
+    settings-appearance-global-theme.desktop
 
     settings-workspace.desktop
     settings-workspace-windowmanagement.desktop

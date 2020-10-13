@@ -30,6 +30,7 @@ class QModelIndex;
 class QAbstractItemView;
 class QAbstractItemModel;
 class QAction;
+class SidebarMode;
 
 class FocusHackWidget : public QWidget {
     Q_OBJECT
@@ -48,16 +49,19 @@ class SubcategoryModel : public KSelectionProxyModel
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
 
 public:
-    explicit SubcategoryModel(QAbstractItemModel *parentModel, QObject *parent = nullptr);
+    explicit SubcategoryModel(QAbstractItemModel *parentModel, SidebarMode *parent = nullptr);
 
     QString title() const;
 
     void setParentIndex(const QModelIndex &activeModule);
 
+    Q_INVOKABLE void loadCategoryModule();
+
 Q_SIGNALS:
     void titleChanged();
 
 private:
+    SidebarMode *m_sidebarMode;
     QAbstractItemModel *m_parentModel;
     QString m_title;
 };

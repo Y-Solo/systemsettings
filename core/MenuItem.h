@@ -155,6 +155,8 @@ public:
      */
     void setService( const KService::Ptr& service );
 
+    void setItem( const KCModuleInfo &item );
+
     MenuItem *descendantForModule(const QString &moduleName);
 
     bool showDefaultIndicator() const;

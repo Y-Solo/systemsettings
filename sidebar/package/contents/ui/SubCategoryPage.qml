@@ -37,7 +37,7 @@ Kirigami.ScrollablePage {
         background: MouseArea {
             anchors.fill: parent
             hoverEnabled: true
-            acceptedButtons: applicationWindow().wideScreen ? Qt.NoButton : Qt.LeftButton
+            //acceptedButtons: applicationWindow().wideScreen ? Qt.NoButton : Qt.LeftButton
             onClicked: backButton.clicked()
             Rectangle {
                 anchors {

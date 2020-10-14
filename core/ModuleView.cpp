@@ -224,7 +224,7 @@ void ModuleView::loadModule( const QModelIndex &menuItem, const QStringList &arg
     QList<QModelIndex> indexes;
 
     MenuItem *item = menuItem.data( Qt::UserRole ).value<MenuItem*>();
-    qWarning()<<"BBBBBBBBBBBBBBBBBBBB"<<item->name()<<item->item().library();
+
     if (!item->item().library().isEmpty()) {
         indexes << menuItem;
     }
@@ -235,7 +235,6 @@ void ModuleView::loadModule( const QModelIndex &menuItem, const QStringList &arg
 
     foreach ( const QModelIndex &module, indexes ) {
         MenuItem *newMenuItem = module.data( Qt::UserRole ).value<MenuItem*>();
-        qWarning()<<"AAAAAAAAAAA"<<newMenuItem->name();
         addModule( &newMenuItem->item(), args );
     }
     // changing state is not needed here as the adding / changing of pages does it

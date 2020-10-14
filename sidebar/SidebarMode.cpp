@@ -94,7 +94,7 @@ QString SubcategoryModel::title() const
 }
 
 QIcon SubcategoryModel::icon() const
-{qWarning()<<"£££££"<<m_activeModuleIndex.data(Qt::DecorationRole);
+{
     return m_activeModuleIndex.data(Qt::DecorationRole).value<QIcon>();
 }
 

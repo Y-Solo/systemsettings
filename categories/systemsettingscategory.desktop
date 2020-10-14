@@ -97,5 +97,5 @@ Type=QString
 Type=QString
 
 # The category a module owns and represents
-[PropertyDef::X-KDE-System-Settings-Owns-Category]
+[PropertyDef::X-KDE-System-Settings-Category-Module]
 Type=QString

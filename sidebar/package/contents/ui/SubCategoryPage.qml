@@ -36,20 +36,39 @@ Kirigami.ScrollablePage {
 
         background: MouseArea {
             anchors.fill: parent
+            hoverEnabled: true
             acceptedButtons: applicationWindow().wideScreen ? Qt.NoButton : Qt.LeftButton
             onClicked: backButton.clicked()
+            Rectangle {
+                anchors {
+                    fill: parent
+                    margins: Kirigami.Units.smallSpacing
+                }
+                radius: 3
+                color: Kirigami.Theme.highlightColor
+                opacity: parent.containsMouse ? 0.2 : 0
+                Behavior on opacity {
+                    OpacityAnimator {
+                        duration: Kirigami.Units.shortDuration
+                        easing.type: Easing.InOutQuad
+                    }
+                }
+            }
         }
 
         contentItem: RowLayout {
             id: toolBarLayout
             anchors.fill: parent
-            spacing: Kirigami.Units.smallSpacing
+            spacing: 0
 
             QQC2.ToolButton {
                 id: backButton
                 visible: !applicationWindow().wideScreen
                 icon.name: LayoutMirroring.enabled ? "go-next-symbolic" : "go-next-symbolic-rtl"
-                onClicked: root.pageStack.currentIndex = 0
+                onClicked: {
+                    systemsettings.subCategoryModel.loadParentCategoryModule();
+                    root.pageStack.currentIndex = 0;
+                }
                 Accessible.role: Accessible.Button
                 Accessible.name: i18n("Go back")
                 QQC2.ToolTip {
@@ -57,12 +76,17 @@ Kirigami.ScrollablePage {
                 }
             }
 
+            Kirigami.Icon {
+                source: systemsettings.subCategoryModel.icon
+                Layout.leftMargin: Kirigami.Units.smallSpacing
+                Layout.preferredWidth: Kirigami.Units.iconSizes.smallMedium
+            }
             Kirigami.Heading {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 // Don't be too short when the back button isn't visible
                 Layout.minimumHeight: backButton.implicitHeight
-                Layout.leftMargin: backButton.visible ? undefined : Kirigami.Units.largeSpacing
+                Layout.leftMargin: backButton.visible ? Kirigami.Units.smallSpacing : Kirigami.Units.largeSpacing
                 level: 3
                 text: subCategoryColumn.title
                 verticalAlignment: Text.AlignVCenter
@@ -110,9 +134,7 @@ Kirigami.ScrollablePage {
         Connections {
             target: systemsettings
             onActiveSubCategoryRowChanged: {
-                if (systemsettings.activeSubCategoryRow < 0) {
-                    root.pageStack.pop(mainColumn)
-                } else {
+                if (systemsettings.activeSubCategoryRow >= 0) {
                     root.pageStack.currentIndex = 1;
                     subCategoryView.forceActiveFocus();
                 }

@@ -23,6 +23,7 @@
 #include "BaseMode.h"
 #include <QWidget>
 #include <KSelectionProxyModel>
+#include <QIcon>
 
 class ModuleView;
 class KAboutData;
@@ -47,23 +48,26 @@ class SubcategoryModel : public KSelectionProxyModel
 {
     Q_OBJECT
     Q_PROPERTY(QString title READ title NOTIFY titleChanged)
+    Q_PROPERTY(QIcon icon READ icon NOTIFY iconChanged)
 
 public:
     explicit SubcategoryModel(QAbstractItemModel *parentModel, SidebarMode *parent = nullptr);
 
     QString title() const;
+    QIcon icon() const;
 
     void setParentIndex(const QModelIndex &activeModule);
 
-    Q_INVOKABLE void loadCategoryModule();
+    Q_INVOKABLE void loadParentCategoryModule();
 
 Q_SIGNALS:
     void titleChanged();
+    void iconChanged();
 
 private:
     SidebarMode *m_sidebarMode;
     QAbstractItemModel *m_parentModel;
-    QString m_title;
+    QPersistentModelIndex m_activeModuleIndex;
 };
 
 class SidebarMode : public BaseMode

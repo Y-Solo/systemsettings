@@ -81,7 +81,7 @@ void FocusHackWidget::focusPrevious()
 SubcategoryModel::SubcategoryModel(QAbstractItemModel *parentModel, SidebarMode *parent)
     : KSelectionProxyModel(nullptr, parent),
         m_parentModel(parentModel),
-        m_sidebarMode(parent);
+        m_sidebarMode(parent)
 {
     setSourceModel(parentModel);
     setSelectionModel(new QItemSelectionModel(parentModel, this));
@@ -90,19 +90,28 @@ SubcategoryModel::SubcategoryModel(QAbstractItemModel *parentModel, SidebarMode 
 
 QString SubcategoryModel::title() const
 {
-    return m_title;
+    return m_activeModuleIndex.data(Qt::DisplayRole).toString();
+}
+
+QIcon SubcategoryModel::icon() const
+{qWarning()<<"£££££"<<m_activeModuleIndex.data(Qt::DecorationRole);
+    return m_activeModuleIndex.data(Qt::DecorationRole).value<QIcon>();
 }
 
 void SubcategoryModel::setParentIndex(const QModelIndex &activeModule)
 {
     selectionModel()->select(activeModule, QItemSelectionModel::ClearAndSelect);
-    m_title = activeModule.data(Qt::DisplayRole).toString();
+    m_activeModuleIndex = QPersistentModelIndex(activeModule);
     emit titleChanged();
+    emit iconChanged();
 }
 
-void SubcategoryModel::loadCategoryModule()
+void SubcategoryModel::loadParentCategoryModule()
 {
-    m_sidebarMode->loadModule(activeModule);
+    MenuItem *menuItem = m_activeModuleIndex.data(MenuModel::MenuItemRole).value<MenuItem *>();
+    if (!menuItem->item().library().isEmpty()) {
+        m_sidebarMode->loadModule(m_activeModuleIndex);
+    }
 }
 
 class MostUsedModel : public QSortFilterProxyModel
@@ -467,11 +476,7 @@ void SidebarMode::loadModule( const QModelIndex& activeModule, const QStringList
         setIntroPageVisible(false);
     }
 
-    if ( 1||mi->children().length() < 1) {
-        d->moduleView->loadModule( activeModule, args );
-    } else {
-        d->moduleView->loadModule( activeModule.model()->index(0, 0, activeModule), args );
-    }
+    d->moduleView->loadModule( activeModule, args );
 
     if (activeModule.model() == d->categorizedModel) {
         const int newCategoryRow = activeModule.row();
@@ -483,7 +488,11 @@ void SidebarMode::loadModule( const QModelIndex& activeModule, const QStringList
         d->activeCategoryIndex = activeModule;
         d->activeCategoryRow = newCategoryRow;
 
-        d->activeSubCategoryRow = 0;
+        if (mi->item().library().isEmpty()) {
+            d->activeSubCategoryRow = 0;
+        } else {
+            d->activeSubCategoryRow = -1;
+        }
 
         d->subCategoryModel->setParentIndex( activeModule );
 
@@ -520,7 +529,7 @@ void SidebarMode::loadModule( const QModelIndex& activeModule, const QStringList
                 d->activeSubCategoryRow = -1;
             }
 
-            d->subCategoryModel->setParentIndex( originalIndex.parent() );
+            d->subCategoryModel->setParentIndex( originalIndex.parent().isValid() ? originalIndex.parent() : originalIndex );
             emit activeCategoryRowChanged();
             emit activeSubCategoryRowChanged();
         }
@@ -551,12 +560,16 @@ void SidebarMode::loadModule( const QModelIndex& activeModule, const QStringList
             QModelIndex idx = d->categorizedModel->mapFromSource(d->flatModel->mapToSource(flatIndex));
 
             MenuItem *parentMi = idx.parent().data(MenuModel::MenuItemRole).value<MenuItem *>();
+
             if (idx.isValid()) {
                 if (parentMi && parentMi->menu()) {
                     d->subCategoryModel->setParentIndex( idx.parent() );
                     d->activeCategoryRow = idx.parent().row();
                     d->activeSubCategoryRow = idx.row();
                 } else {
+                    if (d->categorizedModel->rowCount(idx) > 0) {
+                        d->subCategoryModel->setParentIndex( idx );
+                    }
                     d->activeCategoryRow = idx.row();
                     d->activeSubCategoryRow = -1;
                 }

@@ -33,29 +33,15 @@ Kirigami.ScrollablePage {
         leftPadding: Kirigami.Units.smallSpacing
         rightPadding: Kirigami.Units.smallSpacing
         preferredHeight: toolBarLayout.implicitHeight + topPadding + bottomPadding
-
+/*
         background: MouseArea {
             anchors.fill: parent
             hoverEnabled: true
             //acceptedButtons: applicationWindow().wideScreen ? Qt.NoButton : Qt.LeftButton
             onClicked: backButton.clicked()
-            Rectangle {
-                anchors {
-                    fill: parent
-                    margins: Kirigami.Units.smallSpacing
-                }
-                radius: 3
-                color: Kirigami.Theme.highlightColor
-                opacity: parent.containsMouse ? 0.2 : 0
-                Behavior on opacity {
-                    OpacityAnimator {
-                        duration: Kirigami.Units.shortDuration
-                        easing.type: Easing.InOutQuad
-                    }
-                }
-            }
+            
         }
-
+*/
         contentItem: RowLayout {
             id: toolBarLayout
             anchors.fill: parent
@@ -66,7 +52,7 @@ Kirigami.ScrollablePage {
                 visible: !applicationWindow().wideScreen
                 icon.name: LayoutMirroring.enabled ? "go-next-symbolic" : "go-next-symbolic-rtl"
                 onClicked: {
-                    systemsettings.subCategoryModel.loadParentCategoryModule();
+                    
                     root.pageStack.currentIndex = 0;
                 }
                 Accessible.role: Accessible.Button
@@ -76,21 +62,47 @@ Kirigami.ScrollablePage {
                 }
             }
 
-            Kirigami.Icon {
-                source: systemsettings.subCategoryModel.icon
-                Layout.leftMargin: Kirigami.Units.smallSpacing
-                Layout.preferredWidth: Kirigami.Units.iconSizes.smallMedium
-            }
-            Kirigami.Heading {
+            MouseArea {
+                implicitWidth: titleLayout.implicitWidth
+                implicitHeight: titleLayout.implicitHeight
                 Layout.fillWidth: true
-                Layout.fillHeight: true
-                // Don't be too short when the back button isn't visible
-                Layout.minimumHeight: backButton.implicitHeight
-                Layout.leftMargin: backButton.visible ? Kirigami.Units.smallSpacing : Kirigami.Units.largeSpacing
-                level: 3
-                text: subCategoryColumn.title
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
+                Layout.leftMargin: Kirigami.Units.smallSpacing
+                hoverEnabled: true
+                onClicked: systemsettings.subCategoryModel.loadParentCategoryModule();
+                Rectangle {
+                    anchors {
+                        fill: parent
+                        leftMargin: -Kirigami.Units.smallSpacing
+                        //rightMargin: -Kirigami.Units.smallSpacing
+                    }
+                    radius: 3
+                    color: Kirigami.Theme.highlightColor
+                    opacity: parent.containsMouse ? (parent.pressed ? 0.4 : 0.2) : 0
+                    Behavior on opacity {
+                        OpacityAnimator {
+                            duration: Kirigami.Units.shortDuration
+                            easing.type: Easing.InOutQuad
+                        }
+                    }
+                }
+                RowLayout {
+                    id: titleLayout
+                    spacing: Kirigami.Units.smallSpacing
+                    Kirigami.Icon {
+                        source: systemsettings.subCategoryModel.icon
+                        Layout.preferredWidth: Kirigami.Units.iconSizes.smallMedium
+                    }
+                    Kirigami.Heading {
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        // Don't be too short when the back button isn't visible
+                        Layout.minimumHeight: backButton.implicitHeight
+                        level: 3
+                        text: subCategoryColumn.title
+                        verticalAlignment: Text.AlignVCenter
+                        elide: Text.ElideRight
+                    }
+                }
             }
         }
     }

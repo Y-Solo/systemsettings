@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Service
+X-KDE-ServiceTypes=SystemSettingsCategory
+X-KDE-System-Settings-Category=globaltheme
+X-KDE-System-Settings-Parent-Category=appearance
+X-KDE-System-Settings-Category-Module=kcm_lookandfeel
+X-KDE-Weight=1
+Icon=preferences-desktop-theme-global
+
+Name=Global Theme
+Comment=Choose global look and feel
